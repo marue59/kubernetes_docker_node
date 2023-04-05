@@ -19,3 +19,45 @@ Enfin, pour la mettre sur DockerHub, il faut, après s'être logué avec `docker
 ```bash
 docker push nom-repo/nom-image
 ```
+
+---
+
+### Créer et paramétrer le cluster Kubernetes
+
+Pour pouvoir faire tourner notre application dans le cluster, il faut déjà en avoir un. Pour créer un cluster avec minikube, on va utiliser la commande:
+
+```bash
+minikube start --driver docker
+```
+
+Puis il nous faudra appliquer nos fichiers de ressources via la commande ci-dessous: 
+
+```bash
+kubectl apply -f .\ressources-files\deployment.yml,.\ressources-files\service.yml,.\ressources-files\environment.yml
+```
+
+Enfin, pour accéder, depuis l'extérieur, au cluster local, il faut utiliser le mécanisme du tunneling de minikube, que l'on déclenche via cette commande:
+
+```bash
+minikube service exo-05-service
+```
+
+On obtient ainsi une adresse IP, que l'on peut requêter en ajoutant l'endpoint **/story** auquel on peut envoyer, via une requête **POST**, un JSON de ce type:
+
+```json
+{
+  "text": "Test de requête POST"
+}
+```
+
+Puis, via une requête GET au même endpoint, on va obtenir, normalement, un résultat de ce type: 
+
+```json
+{
+  "story": "Test de requête POST\n"
+}
+```
+
+Si c'est le cas, alors tout est bon, notre application fonctionne ! 
+
+> Pour faire crasher notre application et tester le LoadBalancer, il est aussi possible d'envoyer une requête GET à l'endpoint **/error**.
